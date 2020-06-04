@@ -35,33 +35,33 @@ services:
     networks:
       - template-network
 
-    template_mongo_read_model_db:
-      image: mongo:3.4.22-xenial
-      container_name: template_mongo_read_model_db
-      restart: unless-stopped
-      tty: true
-      ports:
-        - "8081:8081"
-      environment:
-        MONGO_INITDB_DATABASE: template_read_model_db
-        MONGO_INITDB_ROOT_USERNAME: root
-        MONGO_INITDB_ROOT_PASSWORD: secret
-        SERVICE_NAME: template_mongo_read_model_db
-        SERVICE_TAGS: dev
-      volumes:
-        - mongo-read-model-data:/data/db
-      networks:
-        - template-network
+  template_mongo_read_model_db:
+    image: mongo:3.4.22-xenial
+    container_name: template_mongo_read_model_db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8081:8081"
+    environment:
+      MONGO_INITDB_DATABASE: template_read_model_db
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+      SERVICE_NAME: template_mongo_read_model_db
+      SERVICE_TAGS: dev
+    volumes:
+      - mongo-read-model-data:/data/db
+    networks:
+      - template-network
 
-    template_mongo_client_container:
-      image: mongoclient/mongoclient:4.0.0
-      container_name: template_mongo_client_container
-      restart: unless-stopped
-      tty: true
-      ports:
-        - "3999:3000"
-      networks:
-        - template-network
+  template_mongo_client_container:
+    image: mongoclient/mongoclient:4.0.0
+    container_name: template_mongo_client_container
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3999:3000"
+    networks:
+      - template-network
 
   template_postgres_app_db:
     image: postgres:11-alpine
