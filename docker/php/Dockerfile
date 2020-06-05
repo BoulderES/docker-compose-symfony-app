@@ -47,15 +47,6 @@ RUN docker-php-ext-enable exif
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Add user
-RUN addgroup -S www && adduser -S www -G www
-
-# Copy existing application directory permissions
-COPY --chown=www:www .. /var/www
-
-# Change user
-USER www
-
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
