@@ -1,11 +1,11 @@
-version: '3.8'
+version: '3'
 services:
 
   # PHP Runtime Service
   template_php_runtime:
     build:
       context: .
-      dockerfile: docker/php/Dockerfile
+      dockerfile: ./docker/php/Dockerfile
     image: php:7.4.6-fpm-alpine3.11
     container_name: template_php_runtime
     restart: unless-stopped
@@ -70,7 +70,7 @@ services:
     tty: true
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: changeit
+      POSTGRES_PASSWORD: 12345678
       POSTGRES_DB: default
     ports:
       - "5433:5432"
@@ -86,7 +86,7 @@ services:
     tty: true
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: changeit
+      POSTGRES_PASSWORD: 12345678
       POSTGRES_DB: default
     ports:
       - "5434:5432"
@@ -102,7 +102,7 @@ services:
     tty: true
     environment:
       RABBITMQ_DEFAULT_USER: rabbitmq
-      RABBITMQ_DEFAULT_PASS: changeit
+      RABBITMQ_DEFAULT_PASS: 12345678
     ports:
       # The standard AMQP protocol port
       - "5672:5672"
@@ -115,6 +115,9 @@ services:
       - template-network
 
   template_redis:
+    build:
+      context: .
+      dockerfile: ./docker/redis/Dockerfile
     image: redis:alpine
     container_name: template_redis
     restart: unless-stopped
@@ -123,7 +126,7 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    entrypoint: redis-server --appendonly yes
+    entrypoint: redis-server # --appendonly yes
 
   template_redisinsight:
     image: redislabs/redisinsight:1.5.0

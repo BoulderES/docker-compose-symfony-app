@@ -1,13 +1,13 @@
 FROM php:7.4.6-fpm-alpine3.11
 
+
 # Set working directory
 WORKDIR /var/www
 
 # Install common dependencies
 RUN set -ex \
-  && apk --no-cache add \
+  && apk --no-cache --update add \
   postgresql-dev \
-  mariadb-client \
   libpng-dev \
   libjpeg-turbo-dev \
   freetype-dev \
@@ -22,27 +22,32 @@ RUN set -ex \
   oniguruma-dev \
   libzip-dev \
   php7-pecl-amqp \
-  php7-pecl-apcu
+  php7-pecl-redis \
+  redis
+
 
 # Sockets
 RUN docker-php-ext-install sockets
-# Amqp
+# Amqp & Redis
 RUN apk add --no-cache --update rabbitmq-c-dev \
   && apk add --no-cache --update --virtual .phpize-deps $PHPIZE_DEPS \
   && pecl install -o -f amqp \
-  && docker-php-ext-enable amqp \
+  && pecl install -o -f redis \
   && apk del .phpize-deps
 
-# Install common extensions
-RUN docker-php-ext-configure exif
-RUN docker-php-ext-install exif
-RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
-RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl pdo pdo_pgsql
-RUN docker-php-ext-configure gd
-RUN docker-php-ext-install gd
-RUN docker-php-ext-configure zip
 
-RUN docker-php-ext-enable exif
+
+# Install common extensions
+RUN docker-php-ext-configure exif \
+  && docker-php-ext-install exif \
+  && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+  && docker-php-ext-install mbstring zip exif pcntl pdo pdo_pgsql \
+  && docker-php-ext-configure gd \
+  && docker-php-ext-install gd \
+  && docker-php-ext-configure zip \
+  && docker-php-ext-enable exif \
+  && docker-php-ext-enable amqp \
+  && docker-php-ext-enable redis
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
